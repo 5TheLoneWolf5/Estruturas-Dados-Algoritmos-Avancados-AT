@@ -1,27 +1,52 @@
-"""
+cidade = {
+    'Rua A': [("Rua B", 1), ("Rua C", 4)],
+    'Rua B': [("Rua A", 1), ("Rua C", 2), ("Rua D", 5)],
+    'Rua C': [("Rua A", 4), ("Rua B", 2), ("Rua D", 1)],
+    'Rua D': [("Rua B", 5), ("Rua C", 1)],
+}
 
-• Desenho do grafo:
+def dijkstra(graph, start, goal):
+    shortest_distance = {}
+    track_predecessor = {}
+    unseenNodes = dict(graph)
+    infinity = float('inf')
+    track_path = []
 
-      Alice
-      /   \
-     /     \ 
-    /       \
-   Bob   Carlos
-    |    /    \
-    |   /      \
-    Diana     Eduardo
+    for node in unseenNodes:
+        shortest_distance[node] = infinity
 
-• Lista dos vértices e arestas:
+    shortest_distance[start] = 0
 
-- Vértices (e suas respectivas arestas):
-    Alice (arestas: entre Bob e entre Carlos),
-    Bob (arestas: entre Alice e entre Diana),
-    Carlos (arestas: entre Alice, entre Diana e entre Eduardo),
-    Diana (arestas: entre Bob e entre Carlos),
-    Eduardo (aresta: entre Carlos),
+    while unseenNodes:
+        min_distance_node = None
 
-• Resposta:
+        for node in unseenNodes:
+            if min_distance_node is None or shortest_distance[node] < shortest_distance[min_distance_node]:
+                min_distance_node = node
 
-Este grafo é não direcionado, pois uma conexão entre amigos em uma rede social é bidirecional e precisa ser aceita entre dois indivíduos.
+        if min_distance_node is None:
+            break 
 
-""
+        for child_node, weight in graph[min_distance_node]:
+            if weight + shortest_distance[min_distance_node] < shortest_distance[child_node]:
+                shortest_distance[child_node] = weight + shortest_distance[min_distance_node]
+                track_predecessor[child_node] = min_distance_node
+
+        unseenNodes.pop(min_distance_node)
+
+    currentNode = goal
+    while currentNode != start:
+        try:
+            track_path.insert(0, currentNode)
+            currentNode = track_predecessor[currentNode]
+        except KeyError:
+            return
+    track_path.insert(0, start)
+
+    if shortest_distance[goal] != infinity:
+        print('Distância mais curta: ' + str(shortest_distance[goal]))
+        print('Caminho é: ' + str(track_path))
+    else:
+        print("Caminho não foi encontrado.")
+
+dijkstra(graph, 'Cidade A', 'Cidade D')
