@@ -104,6 +104,12 @@ Tempo para Algoritmo Genético: 0.0032835006713867188.
 
 Como é possível analisar, a programação gulosa teve o melhor resultado, com a programação dinâmica logo depois, e então o algoritmo genético.
 
+Pontos a se destacar: 
+
+- A heurística gulosa é rápida e simples, mas não garante encontrar a solução ótima. 
+- A programação dinâmica pode ser computacionalmente cara, mas encontra o caminho ótimo.
+- Já o algoritmo genético tem uma abordagem de evolução, e oferece boas soluções com datasets maiores.
+
 ---------------------------------------------
 
 """

@@ -2,11 +2,12 @@
 
 - Respostas:
 
-a. A BFS percorre as estações primeiro. Contudo, ambas são eficientes dependendo da necessidade. 
+a. Ambas percorrem o grafo com facilidade, contudo a BFS (Breadth-First Search) pode ser mais apropriada, e percorrer as estações primeiro, pelo fato da estrutura do grafo ser mais rasa, larga e esparsa. 
+A diferença é que o DFS explora o grafo profundamente em cada ramificação, enquanto o BFS explora nível a nível, em ordem. 
 
 b. A DFS pode ser mais eficiente que a BFS em encontrar labirintos e detecção de ciclos dos metrôs.
 
-c. Já a BFS pode ser mais eficiente que a DFS em encontrar o caminho mais curto, principalmente neste caso onde existe um grafo não ponderado.
+c. Já a BFS pode ser mais eficiente que a DFS em encontrar o caminho mais curto em um grafo não ponderado, principalmente neste caso onde existe um grafo não ponderado.
 
 """
 
