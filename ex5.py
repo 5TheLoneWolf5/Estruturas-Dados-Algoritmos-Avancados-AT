@@ -2,11 +2,11 @@
 
 - Respostas:
 
-A  
+a. A BFS percorre as estações primeiro. Contudo, ambas são eficientes dependendo da necessidade. 
 
-A DFS pode ser mais eficiente que a BFS em encontrar caminhos de labirintos, detecção de ciclos, no solucionamento de quebra-cabeças como Sudoku e outros.
+b. A DFS pode ser mais eficiente que a BFS em encontrar labirintos e detecção de ciclos dos metrôs.
 
-Enquanto isso, a BFS pode ser mais eficiente que a DFS em encontrar o caminho mais curto em um grafo não ponderado, análise de amigos em uma rede social, web crawling e outros.
+c. Já a BFS pode ser mais eficiente que a DFS em encontrar o caminho mais curto, principalmente neste caso onde existe um grafo não ponderado.
 
 """
 

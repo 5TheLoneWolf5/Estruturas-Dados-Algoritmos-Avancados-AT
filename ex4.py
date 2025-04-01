@@ -1,10 +1,11 @@
 """
 
-Respostas:
+- Respostas:
 
+Neste cenário, a lista de adjacência possui uma vantagem por conta de armazenar apenas as conexões existentes. Já a matriz de adjacência possui a desvantagem de possuir múltiplas conexões nulas guardadas em sua estrutura. 
+Contudo, a matriz de adjacência ainda possui a vantagem sobre a lista de adjacência ao buscar por uma aresta na array em um tempo constante O(1).
 
-
-Caso a situação envolva armazenar e processar grandes cidades com milhares de bairros e conexões, a matriz de adjacência se sai melhor por ser mais eficiente em grafos densos.
+Caso a situação envolva armazenar e processar grandes cidades com milhares de bairros e conexões, a matriz de adjacência pode se sair melhor e ser mais eficiente caso este seja grafo denso (sendo o número de arestas próximo ao máximo possível), por ser mais adequada computacionalmente para estes casos.
 
 """
 

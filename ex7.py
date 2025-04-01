@@ -20,7 +20,10 @@ Resultado:
 
 Respostas:
 
-
+a. O tempo mínimo para viajar do Bairro A até o Bairro F é 16.
+b. Se uma rua (conexão fechar), isso pode mudar como o algoritmo vai percorrer a estrutura, e isso resultará em outras rotas sendo encontradas que podem aumentar o tamanho da distância até o destino.
+c. Este método pode ajudar no planejamento de novas linhas de transporte por mapear estações de trem e informar sobre as melhores e menores distâncias entre todos os pontos já na fase de planejamento. Isto poderá melhorar ao tomar decisões de antemão,
+e também informará os envolvidos com dados, rotas e estações.
 
 """
 

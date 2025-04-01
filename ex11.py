@@ -10,7 +10,7 @@ Tempo para tabuleiro de tamanho 5: 0.012674093246459961 (Força Bruta).
 Tempo para tabuleiro de tamanho 8: 11.726862907409668 (Força Bruta).
 Para o tabuleiro de tamanho 10, não foi possível obter o tempo de execução (o computador não foi capaz de processar a tempo).
 
-Como é possível observar, o algoritmo com base na heurística de Warnsdorff (Menor Grau), se sai melhor comparado em performance comparado a abordagem de força bruta, especialmente em tabuleiros maiores.
+Como é possível observar, o algoritmo com base na heurística de Warnsdorff (Menor Grau), se sai melhor em performance comparado a força bruta, especialmente em tabuleiros maiores.
 
 """
 
@@ -51,7 +51,7 @@ def problema_cavalo_menor_grau(n):
         for i in range(1, N * N):
             movimento = proximo_movimento(tabuleiro, x, y, N)
             if not movimento:
-                print("Falha: Caminho interrompido!")
+                print("Caminho foi interrompido.")
                 return None
             
             x, y = movimento
@@ -91,8 +91,8 @@ def problema_cavalo_forca_bruta(n):
 
         pos = 1
 
-        if(not solveKTUtil(n, board, 0, 0, move_x, move_y, pos)):
-            print("Solution does not exist")
+        if (not solveKTUtil(n, board, 0, 0, move_x, move_y, pos)):
+            print("Solução não existe.")
         else:
             printSolution(n, board)
 

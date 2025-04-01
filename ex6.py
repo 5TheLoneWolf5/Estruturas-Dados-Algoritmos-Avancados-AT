@@ -2,9 +2,17 @@
 
 - Respostas:
 
-Sim, ele encontrou exatamente o caminho esperado:
+* Rota ótima e custo total: F->D->B->CD e 15km.
 
-Essa abordagem pode ser utilizada em cidades maiores.
+a. Sim, ele encontrou exatamente o caminho esperado. A rota mais curta do Centro de Distribuição até o Bairro F é 15 km.
+
+b. Essa abordagem pode ser utilizada em cidades maiores (para otimizar a logística) por eficientemente obter os caminhos mais curtos entre o lugar escolhido até outros diversos vértices presentes e 
+também por acomodar estruturas maiores e mais complexas com o objetivo de mapear lugares e trajetos.
+
+c. Apesar de houver uma mudança no tipo da unidade, a solução pode se manter a mesma levando em conta o princípio algoritmo procurar o caminho mais curto. 
+Contudo, o tempo de viagem pode levar em consideração outras variáveis como o trânsito e acidentes, neste caso, alterando o parâmetro de peso daquela aresta.
+Ou seja, dependendo de como a funcionalidade seja de fato implementada, o resultado final pode ser diferente.
+É importante deixar claro que o algoritmo de Dijkstra se preocupa com a relação entre os pesos, desde que sejam equivalentes, e não com unidades em específico (15km ou 15m serão vistos do mesmo modo).
 
 """
 
@@ -26,6 +34,7 @@ class Graph:
     def dijkstra(self, start_vertex_data):
         start_vertex = self.vertex_data.index(start_vertex_data)
         distances = [float('inf')] * self.size
+        predecessors = [None] * self.size
         distances[start_vertex] = 0
         visited = [False] * self.size
 
@@ -47,8 +56,20 @@ class Graph:
                     alt = distances[u] + self.adj_matrix[u][v]
                     if alt < distances[v]:
                         distances[v] = alt
+                        predecessors[v] = u
 
-        return distances
+        return distances, predecessors
+
+    def get_path(self, predecessors, start_vertex, end_vertex):
+        path = []
+        current = self.vertex_data.index(end_vertex)
+        while current is not None:
+            path.insert(0, self.vertex_data[current])
+            current = predecessors[current]
+            if current == self.vertex_data.index(start_vertex):
+                path.insert(0, start_vertex)
+                break
+        return '->'.join(path)
 
 g = Graph(7)
 
@@ -73,7 +94,10 @@ g.add_edge(4, 6, 5)
 g.add_edge(5, 6, 3)
 
 print("\nAlgoritmo de Dijkstra\n")
-distances = g.dijkstra('F')
+dis, pred = g.dijkstra('F')
 
-for i, d in enumerate(distances):
-    print(f"Distância de F para {g.vertex_data[i]}: {d}")
+print("Caminho:  |  Distância:")
+
+for i, d in enumerate(dis):
+    _path = g.get_path(pred, 'F', g.vertex_data[i])
+    print(f"{_path} {d}km")

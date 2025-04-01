@@ -1,6 +1,117 @@
+"""
+
+- Comparação dos tempos de execução e resultados:
+
+---------------------------------------------
+
+80
+Tempo para Programação Dinâmica: 1.6927719116210938e-05.
+
+---------------------------------------------
+
+Custo mínimo : 80
+Tempo para Heurística Gulosa: 6.723403930664062e-05.
+
+---------------------------------------------
+
+População inicial:
+GNOME     VALOR FITNESS
+
+02130 95
+02130 95
+02130 95
+02130 95
+02130 95
+02130 95
+02130 95
+02130 95
+02130 95
+02130 95
+
+
+Atual:  10000
+Geração 1
+GNOME     VALOR FITNESS
+01230 95
+01230 95
+02310 80
+01230 95
+01230 95
+02310 80
+01230 95
+01230 95
+03120 95
+03120 95
+
+Atual:  9000.0
+Geração 2
+GNOME     VALOR FITNESS
+01320 80
+01320 80
+03210 95
+01320 80
+02130 95
+02130 95
+02130 95
+03210 95
+01320 80
+03210 95
+
+Atual:  8100.0
+Geração 3
+GNOME     VALOR FITNESS
+01230 95
+03120 95
+01230 95
+01230 95
+02310 80
+02310 80
+01230 95
+01230 95
+01230 95
+02310 80
+
+Atual:  7290.0
+Geração 4
+GNOME     VALOR FITNESS
+02130 95
+03210 95
+03210 95
+03210 95
+01320 80
+03210 95
+01320 80
+03210 95
+03210 95
+01320 80
+
+Atual:  6561.0
+Geração 5
+GNOME     VALOR FITNESS
+01230 95
+03120 95
+03120 95
+03120 95
+03120 95
+01230 95
+01230 95
+01230 95
+02310 80
+03120 95
+Tempo para Algoritmo Genético: 0.0032835006713867188.
+
+- Análise:
+
+Como é possível analisar, a programação gulosa teve o melhor resultado, com a programação dinâmica logo depois, e então o algoritmo genético.
+
+---------------------------------------------
+
+"""
+
 ### Programação Dinâmica ###
 
 import sys
+import time
 from random import randint
 from typing import DefaultDict
 
@@ -213,14 +324,25 @@ if __name__ == "__main__":
         [20, 25, 30, 0]
     ]
 
+    start = time.time()
     result = tsp(cost)
+    end = time.time()
     print(result)
+    print(f"Tempo para Programação Dinâmica: {end - start}.")
 
     print("---------------------------------------------")
 
-    tsp = [[-1, 10, 15, 20], [10, -1, 35, 25], [15, 35, -1, 30], [20, 25, 30, -1]]
+    tsp = [
+        [-1, 10, 15, 20], 
+        [10, -1, 35, 25], 
+        [15, 35, -1, 30], 
+        [20, 25, 30, -1]
+    ]
 
+    start = time.time()
     findMinRoute(tsp)
+    end = time.time()
+    print(f"Tempo para Heurística Gulosa: {end - start}.")
 
     print("---------------------------------------------")
 
@@ -230,6 +352,9 @@ if __name__ == "__main__":
         [15, 35, 0, 30],
         [20, 25, 30, 0]
     ]
+    start = time.time()
     TSPUtil(mp)
+    end = time.time()
+    print(f"Tempo para Algoritmo Genético: {end - start}.")
 
     print("---------------------------------------------")

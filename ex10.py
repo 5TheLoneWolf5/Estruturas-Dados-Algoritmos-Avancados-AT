@@ -1,6 +1,6 @@
 """
 
-Resultado:
+- Resultados:
 
 Aresta  Peso
 0 - 1    2
@@ -8,7 +8,7 @@ Aresta  Peso
 0 - 3    6
 1 - 4    5
 
-- Tempo (grafo pequeno): 0.0003325939178466797
+* Tempo (grafo pequeno): 0.0003325939178466797
 
 Aresta  Peso
 0 - 1    4
@@ -26,13 +26,15 @@ Aresta  Peso
 12 - 13          4
 13 - 14          3
 
-- Tempo (grafo grande): 0.0007748603820800781
+* Tempo (grafo grande): 0.0007748603820800781
 
-Explicação:
+- Explicação:
 
-Nos casos testados, existe uma diferença leve, onde o grafo pequeno é mais rápido. Mas é algo de todo modo notável. Em todos os casos o grafo pequeno se sai um pouco melhor no critério temporal.
+Nos casos testados, existe uma diferença leve, onde o grafo pequeno é mais rápido. De todo modo, é algo notável. Ao rodar o programa múltiplas vezes com os mesmos datasets, o grafo pequeno sempre se saiu um pouco melhor no critério temporal.
 
-Este algoritmo pode se tornar computacionalmente custoso com uma grande massa de dados envolvida. Implementar uma lista adjacente, dependendo do caso, pode ser uma boa alternativa para melhorar o desempenho.
+Isso é esperado. Em matrizes de adjacência, o algoritmo de Prim tem uma complexidade temporal O(V^2), sendo V o número de vértices.
+
+Este algoritmo pode se tornar computacionalmente custoso com uma grande massa de dados envolvida. Implementar uma lista adjacente, dependendo do caso, pode ser uma boa opção para melhorar o desempenho.
 
 """
 
@@ -50,6 +52,7 @@ class Graph():
         print("Aresta \tPeso")
         for i in range(1, self.V):
             print(parent[i], "-", i, "\t", self.graph[parent[i]][i])
+
     def minKey(self, key, mstSet):
         min = sys.maxsize
         for v in range(self.V):
