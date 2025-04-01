@@ -1,56 +1,235 @@
-"""
+### Programação Dinâmica ###
 
-No código abaixo, utilizo BFS para encontrar o caminho mais curto entre o bairro A e o bairro F. Também é retornado o caminho e bairros percorridos.
+import sys
+from random import randint
+from typing import DefaultDict
 
-"""
+def totalCost(mask, pos, n, cost):
+    if mask == (1 << n) - 1:
+        return cost[pos][0]
 
-class Grafo:
-    def __init__(self):
-        self.lista_adjacencia = {}
+    ans = sys.maxsize   
 
-    def adicionar_vertice(self, vertice):
-        if vertice not in self.lista_adjacencia:
-            self.lista_adjacencia[vertice] = []
+    for i in range(n):
+        if (mask & (1 << i)) == 0: 
+            ans = min(ans, cost[pos][i] +
+                      totalCost(mask | (1 << i), i, n, cost))
 
-    def adicionar_aresta(self, vertice1, vertice2):
-        if vertice1 in self.lista_adjacencia and vertice2 in self.lista_adjacencia:
-            self.lista_adjacencia[vertice1].append(vertice2)
-            self.lista_adjacencia[vertice2].append(vertice1)
+    return ans
+ 
 
-    def mostrar_grafo(self):
-        for vertice in self.lista_adjacencia:
-            print(f"{vertice} -> {self.lista_adjacencia[vertice]}")
+def tsp(cost):
+    n = len(cost)
+    return totalCost(1, 0, n, cost)
 
-    def mostrar_vizinhos(self, vertice):
-        if vertice in self.lista_adjacencia:
-            print(f"Vizinhos de {vertice}: {self.lista_adjacencia[vertice]}")
-        else:
-            print(f"O vértice {vertice} não existe no grafo.")
+### Heurística Gulosa ###
 
-    def bfs(self, inicio, objetivo):
-        visitados = set()
-        fila = [inicio]
+INT_MAX = 2147483647
 
-        while fila:
-            vertice = fila.pop(0)
-            if vertice not in visitados:
-                print(vertice, end=" ")
-                if vertice == objetivo:
-                    print(f"\n{objetivo} encontrado!")
-                    return visitados
-                visitados.add(vertice)
-                fila.extend(self.lista_adjacencia[vertice])
-        
-grafo = Grafo()
+def findMinRoute(tsp):
+    sum = 0
+    counter = 0
+    j = 0
+    i = 0
+    min = INT_MAX
+    visitedRouteList = DefaultDict(int)
 
-for v in ["A", "B", "C", "D", "E", "F"]:
-    grafo.adicionar_vertice(v)
+    visitedRouteList[0] = 1
+    route = [0] * len(tsp)
 
-arestas = [("A", "B"), ("A", "C"), ("B", "D"), ("C", "D"), ("F", "C")]
-for v1, v2 in arestas:
-    grafo.adicionar_aresta(v1, v2)
+    while i < len(tsp) and j < len(tsp[i]):
 
-print("Lista de Adjacência do Grafo:")
-grafo.mostrar_grafo()
+        if counter >= len(tsp[i]) - 1:
+            break
 
-grafo.bfs("A", "C")
+        if j != i and (visitedRouteList[j] == 0):
+            if tsp[i][j] < min:
+                min = tsp[i][j]
+                route[counter] = j + 1
+
+        j += 1
+
+        if j == len(tsp[i]):
+            sum += min
+            min = INT_MAX
+            visitedRouteList[route[counter] - 1] = 1
+            j = 0
+            i = route[counter] - 1
+            counter += 1
+
+    i = route[counter - 1] - 1
+
+    for j in range(len(tsp)):
+
+        if (i != j) and tsp[i][j] < min:
+            min = tsp[i][j]
+            route[counter] = j + 1
+
+    sum += min
+
+    print("Custo mínimo :", sum)
+
+### Algoritmo Genético ###
+
+INT_MAX = 2147483647
+V = 4
+GENES = "ABCD"
+START = 0
+POP_SIZE = 10
+
+class individual:
+    def __init__(self) -> None:
+        self.gnome = ""
+        self.fitness = 0
+
+    def __lt__(self, other):
+        return self.fitness < other.fitness
+
+    def __gt__(self, other):
+        return self.fitness > other.fitness
+
+def rand_num(start, end):
+    return randint(start, end-1)
+
+def repeat(s, ch):
+    for i in range(len(s)):
+        if s[i] == ch:
+            return True
+
+    return False
+
+def mutatedGene(gnome):
+    gnome = list(gnome)
+    while True:
+        r = rand_num(1, V)
+        r1 = rand_num(1, V)
+        if r1 != r:
+            temp = gnome[r]
+            gnome[r] = gnome[r1]
+            gnome[r1] = temp
+            break
+    return ''.join(gnome)
+
+def create_gnome():
+    gnome = "0"
+    while True:
+        if len(gnome) == V:
+            gnome += gnome[0]
+            break
+
+        temp = rand_num(1, V)
+        if not repeat(gnome, chr(temp + 48)):
+            gnome += chr(temp + 48)
+
+    return gnome
+
+def cal_fitness(gnome):
+    mp = [
+        [0, 10, 15, 20],
+        [10, 0, 35, 25],
+        [15, 35, 0, 30],
+        [20, 25, 30, 0]
+    ]
+    f = 0
+    for i in range(len(gnome) - 1):
+        if mp[ord(gnome[i]) - 48][ord(gnome[i + 1]) - 48] == INT_MAX:
+            return INT_MAX
+        f += mp[ord(gnome[i]) - 48][ord(gnome[i + 1]) - 48]
+
+    return f
+
+def cooldown(temp):
+    return (90 * temp) / 100
+
+def TSPUtil(mp):
+    gen = 1
+    gen_thres = 5
+
+    population = []
+    temp = individual()
+
+    for i in range(POP_SIZE):
+        temp.gnome = create_gnome()
+        temp.fitness = cal_fitness(temp.gnome)
+        population.append(temp)
+
+    print("\nPopulação inicial: \nGNOME     VALOR FITNESS\n")
+    for i in range(POP_SIZE):
+        print(population[i].gnome, population[i].fitness)
+    print()
+
+    found = False
+    temperature = 10000
+
+    while temperature > 1000 and gen <= gen_thres:
+        population.sort()
+        print("\nAtual: ", temperature)
+        new_population = []
+
+        for i in range(POP_SIZE):
+            p1 = population[i]
+
+            while True:
+                new_g = mutatedGene(p1.gnome)
+                new_gnome = individual()
+                new_gnome.gnome = new_g
+                new_gnome.fitness = cal_fitness(new_gnome.gnome)
+
+                if new_gnome.fitness <= population[i].fitness:
+                    new_population.append(new_gnome)
+                    break
+
+                else:
+                    prob = pow(
+                        2.7,
+                        -1
+                        * (
+                            (float)(new_gnome.fitness - population[i].fitness)
+                            / temperature
+                        ),
+                    )
+                    if prob > 0.5:
+                        new_population.append(new_gnome)
+                        break
+
+        temperature = cooldown(temperature)
+        population = new_population
+        print("Geração", gen)
+        print("GNOME     VALOR FITNESS")
+
+        for i in range(POP_SIZE):
+            print(population[i].gnome, population[i].fitness)
+        gen += 1
+
+
+if __name__ == "__main__":
+
+    print("---------------------------------------------")
+    
+    cost = [
+        [0, 10, 15, 20],
+        [10, 0, 35, 25],
+        [15, 35, 0, 30],
+        [20, 25, 30, 0]
+    ]
+
+    result = tsp(cost)
+    print(result)
+
+    print("---------------------------------------------")
+
+    tsp = [[-1, 10, 15, 20], [10, -1, 35, 25], [15, 35, -1, 30], [20, 25, 30, -1]]
+
+    findMinRoute(tsp)
+
+    print("---------------------------------------------")
+
+    mp = [
+        [0, 10, 15, 20],
+        [10, 0, 35, 25],
+        [15, 35, 0, 30],
+        [20, 25, 30, 0]
+    ]
+    TSPUtil(mp)
+
+    print("---------------------------------------------")

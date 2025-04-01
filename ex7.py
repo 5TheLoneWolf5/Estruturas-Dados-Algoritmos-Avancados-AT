@@ -1,55 +1,56 @@
 """
 
-- Grafo:
+Resultado:
 
-Cidades (Vértices): A, B, C, D, E, F
-Estradas (Arestas):
+-----------------
+-1 5 10 -1 -1 -1
+5 -1 3 8 -1 -1
+10 3 -1 2 7 -1
+-1 8 2 -1 4 6
+-1 -1 7 4 -1 5
+-1 -1 -1 6 5 -1
+-----------------
+10 5 8 10 14 16
+5 6 3 5 9 11
+8 3 4 2 6 8
+10 5 2 4 4 6
+14 9 6 4 8 5
+16 11 8 6 5 10
+-----------------
 
-A ↔ B
-A ↔ C
-B ↔ D
-C ↔ E
-D ↔ F
+Respostas:
 
-Resposta:
 
-Para este caso, uma Lista de Adjacência é uma opção mais eficiente para armazenar este conjunto de dados, já que cada vértice dentro da estrutura possui apenas duas conexões, fazendo deste um grafo não denso.
-Um grafo denso seria um grafo com o número de arestas próximo ou igual ao número possível de arestas entre os vértices.
 
 """
 
-class Grafo:
-    def __init__(self):
-        self.lista_adjacencia = {}
+def floydWarshall(graph):
+    V = len(graph)
+    for k in range(V):
+        for i in range(V):
+            for j in range(V):
+                if ((graph[i][j] == -1 or graph[i][j] > (graph[i][k] + graph[k][j])) and (graph[k][j] != -1 and graph[i][k] != -1)):
+                    graph[i][j] = graph[i][k] + graph[k][j]
 
-    def adicionar_vertice(self, vertice):
-        if vertice not in self.lista_adjacencia:
-            self.lista_adjacencia[vertice] = []
+print("-----------------")
 
-    def adicionar_aresta(self, vertice1, vertice2):
-        if vertice1 in self.lista_adjacencia and vertice2 in self.lista_adjacencia:
-            self.lista_adjacencia[vertice1].append(vertice2)
-            self.lista_adjacencia[vertice2].append(vertice1)
+grafo_cidade = [
+    [-1, 5, 10, -1, -1, -1],
+    [5, -1, 3, 8, -1, -1],
+    [10, 3, -1, 2, 7, -1],
+    [-1, 8, 2, -1, 4, 6],
+    [-1, -1, 7, 4, -1, 5],
+    [-1, -1, -1, 6, 5, -1],
+]
 
-    def mostrar_grafo(self):
-        for vertice in self.lista_adjacencia:
-            print(f"{vertice} -> {self.lista_adjacencia[vertice]}")
+for i in grafo_cidade:
+    print(*i)
+    
+floydWarshall(grafo_cidade)
 
+print("-----------------")
 
-    def mostrar_vizinhos(self, vertice):
-        if vertice in self.lista_adjacencia:
-            print(f"Vizinhos de {vertice}: {self.lista_adjacencia[vertice]}")
-        else:
-            print(f"O vértice {vertice} não existe no grafo.")
+for i in grafo_cidade:
+    print(*i)
 
-grafo = Grafo()
-
-for v in ["A", "B", "C", "D", "E", "F"]:
-    grafo.adicionar_vertice(v)
-
-arestas = [("A", "B"), ("A", "C"), ("B", "D"), ("C", "E"), ("D", "F"), ("E", "F")]
-for v1, v2 in arestas:
-    grafo.adicionar_aresta(v1, v2)
-
-print("Lista de Adjacência do Grafo:")
-grafo.mostrar_grafo()
+print("-----------------")

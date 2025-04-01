@@ -1,71 +1,125 @@
 """
 
-Resposta:
+Resultado:
 
-A DFS pode ser mais eficiente que a BFS em encontrar caminhos de labirintos, detecção de ciclos, no solucionamento de quebra-cabeças como Sudoku e outros.
+Aresta  Peso
+0 - 1    2
+1 - 2    3
+0 - 3    6
+1 - 4    5
 
-Enquanto isso, a BFS pode ser mais eficiente que a DFS em encontrar o caminho mais curto em um grafo não ponderado, análise de amigos em uma rede social, web crawling e outros.
+- Tempo (grafo pequeno): 0.0003325939178466797
+
+Aresta  Peso
+0 - 1    4
+8 - 2    5
+2 - 3    2
+5 - 4    3
+6 - 5    5
+3 - 6    4
+8 - 7    3
+9 - 8    4
+0 - 9    3
+9 - 10   2
+10 - 11          3
+11 - 12          5
+12 - 13          4
+13 - 14          3
+
+- Tempo (grafo grande): 0.0007748603820800781
+
+Explicação:
+
+Nos casos testados, existe uma diferença leve, onde o grafo pequeno é mais rápido. Mas é algo de todo modo notável. Em todos os casos o grafo pequeno se sai um pouco melhor no critério temporal.
+
+Este algoritmo pode se tornar computacionalmente custoso com uma grande massa de dados envolvida. Implementar uma lista adjacente, dependendo do caso, pode ser uma boa alternativa para melhorar o desempenho.
 
 """
 
-class Grafo:
-    def __init__(self):
-        self.lista_adjacencia = {}
+import sys
+import random
+import time
 
-    def adicionar_vertice(self, vertice):
-        if vertice not in self.lista_adjacencia:
-            self.lista_adjacencia[vertice] = []
+class Graph():
+    def __init__(self, vertices):
+        self.V = vertices
+        self.graph = [[0 for column in range(vertices)]
+                      for row in range(vertices)]
 
-    def adicionar_aresta(self, vertice1, vertice2):
-        if vertice1 in self.lista_adjacencia and vertice2 in self.lista_adjacencia:
-            self.lista_adjacencia[vertice1].append(vertice2)
+    def printMST(self, parent):
+        print("Aresta \tPeso")
+        for i in range(1, self.V):
+            print(parent[i], "-", i, "\t", self.graph[parent[i]][i])
+    def minKey(self, key, mstSet):
+        min = sys.maxsize
+        for v in range(self.V):
+            if key[v] < min and mstSet[v] == False:
+                min = key[v]
+                min_index = v
 
-    def mostrar_grafo(self):
-        for vertice in self.lista_adjacencia:
-            print(f"{vertice} -> {self.lista_adjacencia[vertice]}")
+        return min_index
 
-    def mostrar_vizinhos(self, vertice):
-        if vertice in self.lista_adjacencia:
-            print(f"Vizinhos de {vertice}: {self.lista_adjacencia[vertice]}")
-        else:
-            print(f"O vértice {vertice} não existe no grafo.")
+    def primMST(self):
+        key = [sys.maxsize] * self.V
+        parent = [None] * self.V
+        key[0] = 0
+        mstSet = [False] * self.V
 
-    def bfs(self, inicio):
-        visitados = set()
-        fila = [inicio]
+        parent[0] = -1
 
-        while fila:
-            vertice = fila.pop(0)
-            if vertice not in visitados:
-                print(vertice, end=" ")
-                visitados.add(vertice)
-                fila.extend(self.lista_adjacencia[vertice])
+        for cout in range(self.V):
+            u = self.minKey(key, mstSet)
+            mstSet[u] = True
 
-    def dfs_recursivo(self, vertice, visitados=None):
-        if visitados is None:
-            visitados = set()
+            for v in range(self.V):
+                if self.graph[u][v] > 0 and mstSet[v] == False \
+                and key[v] > self.graph[u][v]:
+                    key[v] = self.graph[u][v]
+                    parent[v] = u
 
-        print(vertice, end=" ")
-        visitados.add(vertice)
+        self.printMST(parent)
 
-        for vizinho in self.lista_adjacencia[vertice]:
-            if vizinho not in visitados:
-                self.dfs_recursivo(vizinho, visitados)
+small_graph = Graph(5)
+small_graph.graph = [
+    [0,  2,  0,  6,  0],
+    [2,  0,  3,  8,  5],
+    [0,  3,  0,  0,  7],
+    [6,  8,  0,  0,  9],
+    [0,  5,  7,  9,  0]
+]
 
-grafo = Grafo()
+start = time.time()
 
-for v in [1, 2, 3, 4, 5, 6]:
-    grafo.adicionar_vertice(v)
+small_graph.primMST()
 
-arestas = [(1, 2), (1, 3), (2, 4), (3, 5), (4, 6), (5, 6)]
-for v1, v2 in arestas:
-    grafo.adicionar_aresta(v1, v2)
+end = time.time()
 
-print("Lista de Adjacência do Grafo:")
-grafo.mostrar_grafo()
+print(f"- Tempo (grafo pequeno): {end - start}")
 
-grafo.mostrar_vizinhos(2)
+big_graph = Graph(15)
 
-grafo.bfs(1)
-print()
-grafo.dfs_recursivo(1)
+big_graph.graph = [
+    [  0,   4,   0,   0,   8,   0,   0,   0,   0,   3,   0,   0,   0,   0,   0],
+    [  4,   0,   7,   0,   0,   6,   0,   0,   0,   0,   9,   0,   0,   0,   0],
+    [  0,   7,   0,   2,   0,   0,   0,   0,   5,   0,   0,   0,   0,   0,   0],
+    [  0,   0,   2,   0,   0,   0,   4,   0,   0,   0,   0,   8,   0,   0,   0],
+    [  8,   0,   0,   0,   0,   3,   0,   0,   0,   0,   0,   0,   6,   0,   0],
+    [  0,   6,   0,   0,   3,   0,   5,   0,   0,   0,   0,   0,   0,   7,   0],
+    [  0,   0,   0,   4,   0,   5,   0,   6,   0,   0,   0,   0,   0,   0,   0],
+    [  0,   0,   0,   0,   0,   0,   6,   0,   3,   0,   0,   0,   0,   0,   9],
+    [  0,   0,   5,   0,   0,   0,   0,   3,   0,   4,   0,   0,   0,   0,   0],
+    [  3,   0,   0,   0,   0,   0,   0,   0,   4,   0,   2,   0,   0,   0,   0],
+    [  0,   9,   0,   0,   0,   0,   0,   0,   0,   2,   0,   3,   0,   0,   0],
+    [  0,   0,   0,   8,   0,   0,   0,   0,   0,   0,   3,   0,   5,   0,   0],
+    [  0,   0,   0,   0,   6,   0,   0,   0,   0,   0,   0,   5,   0,   4,   0],
+    [  0,   0,   0,   0,   0,   7,   0,   0,   0,   0,   0,   0,   4,   0,   3],
+    [  0,   0,   0,   0,   0,   0,   0,   9,   0,   0,   0,   0,   0,   3,   0],
+]
+
+start = time.time()
+
+big_graph.primMST()
+
+end = time.time()
+
+print(f"- Tempo (grafo grande): {end - start}")

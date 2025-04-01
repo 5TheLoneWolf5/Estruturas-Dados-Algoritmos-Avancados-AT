@@ -1,52 +1,80 @@
-cidade = {
-    'Rua A': [("Rua B", 1), ("Rua C", 4)],
-    'Rua B': [("Rua A", 1), ("Rua C", 2), ("Rua D", 5)],
-    'Rua C': [("Rua A", 4), ("Rua B", 2), ("Rua D", 1)],
-    'Rua D': [("Rua B", 5), ("Rua C", 1)],
-}
+"""
 
-def dijkstra(graph, start, goal):
-    shortest_distance = {}
-    track_predecessor = {}
-    unseenNodes = dict(graph)
-    infinity = float('inf')
-    track_path = []
+Respostas:
 
-    for node in unseenNodes:
-        shortest_distance[node] = infinity
+Uma estrutura de dados Heap pode ser utilizada em vários casos onde existe uma fila de prioridade baseado em um valor, como uma fila médica, por exemplo.
 
-    shortest_distance[start] = 0
+Utilizar uma estrutura Heap pode melhorar a performance e simplicidade ao implementar de um conjunto de dados baseado em prioridade (é possível acessar e remover elementos com maior prioridade) comparado a uma lista, como exemplo.
 
-    while unseenNodes:
-        min_distance_node = None
+"""
 
-        for node in unseenNodes:
-            if min_distance_node is None or shortest_distance[node] < shortest_distance[min_distance_node]:
-                min_distance_node = node
+class MinHeap:
+    def __init__(self):
+        self.heap = []
+    
+    def insert(self, item):
+        self.heap.append(item)
+        self._heapify_up(len(self.heap) - 1)
 
-        if min_distance_node is None:
-            break 
+    def pop(self):
+        if len(self.heap) == 0:
+            return None
+        if len(self.heap) == 1:
+            return self.heap.pop()
+        root = self.heap[0]
+        self.heap[0] = self.heap.pop()
+        self._heapify_down(0)
+        return root
 
-        for child_node, weight in graph[min_distance_node]:
-            if weight + shortest_distance[min_distance_node] < shortest_distance[child_node]:
-                shortest_distance[child_node] = weight + shortest_distance[min_distance_node]
-                track_predecessor[child_node] = min_distance_node
+    def modify_priority(self, idItem, newPriority):
+        self.heap[idItem] = (self.heap[idItem][0], self.heap[idItem][1], newPriority)
+        self._heapify_up(len(self.heap) - 1)
+        self._heapify_down(0)
 
-        unseenNodes.pop(min_distance_node)
-
-    currentNode = goal
-    while currentNode != start:
-        try:
-            track_path.insert(0, currentNode)
-            currentNode = track_predecessor[currentNode]
-        except KeyError:
+    def modify_priority(self, idItem, newPriority):
+        right_tuple = [i for i in self.heap if i[0] == idItem]
+        if len(right_tuple) != 1:
+            print("Nenhum valor encontrado (OU múltiplos itens com o mesmo ID).")
             return
-    track_path.insert(0, start)
+        index = self.heap.index(right_tuple[0])
+        self.heap[index] = (right_tuple[0][0], right_tuple[0][1], newPriority)
+        self._heapify_up(index)
+        self._heapify_down(index)
+    
+    def _heapify_up(self, index):
+        parent_index = (index - 1) // 2
+        while index > 0 and self.heap[index][2] < self.heap[parent_index][2]:
+            self.heap[index], self.heap[parent_index] = self.heap[parent_index], self.heap[index]
+            index = parent_index
+            parent_index = (index - 1) // 2
 
-    if shortest_distance[goal] != infinity:
-        print('Distância mais curta: ' + str(shortest_distance[goal]))
-        print('Caminho é: ' + str(track_path))
-    else:
-        print("Caminho não foi encontrado.")
+    def _heapify_down(self, index):
+        smallest = index
+        left_child = 2 * index + 1
+        right_child = 2 * index + 2
 
-dijkstra(graph, 'Cidade A', 'Cidade D')
+        if left_child < len(self.heap) and self.heap[left_child][2] < self.heap[smallest][2]:
+            smallest = left_child
+        if right_child < len(self.heap) and self.heap[right_child][2] < self.heap[smallest][2]:
+            smallest = right_child
+        
+        if smallest != index:
+            self.heap[index], self.heap[smallest] = self.heap[smallest], self.heap[index]
+            self._heapify_down(smallest)
+
+# ID, tempo de execução (ms) e prioridade.
+
+tarefas = [(1, 443, 2), (2, 988, 3), (3, 854, 1), (4, 6554, 4)]
+
+heap = MinHeap()
+
+for i in tarefas:
+    heap.insert(i)
+
+heap.modify_priority(3, 5)
+
+print("- Tarefas: ")
+
+while len(heap.heap) > 0:
+    _id, tempo, prioridade  = heap.pop()
+    print(f"\t{_id} - {tempo} - {prioridade}")

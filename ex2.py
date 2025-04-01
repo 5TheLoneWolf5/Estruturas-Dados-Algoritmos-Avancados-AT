@@ -1,46 +1,83 @@
 """
 
-Para este exercício, foi implementado uma Lista de Adjacência.
+Respostas:
 
-Justificação:
+Arrays armazenam coleções de elementos do mesmo tipo, ordenados e os mesmos são guardados em um espaço contínuo de memória, o que as deixa mais eficientes ao manipular grandes quantidades de dados comparado a listas ordenadas e não ordenadas.
 
-Se o objetivo for encontrar a rota mais curta entre dois bairros, a Lista de Adjacência com BFS (Breadth-first search) é uma melhor opção por conta da estrutura utilizar menos memória e por guardar apenas as conexões existentes entre os bairros.
+Dada a natureza baseada em prioridade de uma estrutura Heap, ela otimiza o processamento de pacotes em um roteador ao eficientemente implementar filas de prioridade, o que permite os roteadores identificarem rapidamente os pacotes baseado na prioridade.
 
 """
 
-class MapaCidade:
+import numpy as np
+
+element_dtype = np.dtype([('id', np.int32), ('prioridade', np.int32), ('tempo', np.int32)])
+
+class MinHeap:
     def __init__(self):
-        self.lista_adjacencia = {}
+        self.heap = np.empty(0, dtype=element_dtype) # Criando array com numpy.
+    
+    def insert(self, item):
+        new_item = np.array(item, dtype=element_dtype)
+        self.heap = np.append(self.heap, new_item)
+        self._heapify_up(len(self.heap) - 1)
+    
+    def pop(self):
+        if len(self.heap) == 0:
+            return None
+        if len(self.heap) == 1:
+            item = self.heap[0]
+            self.heap = np.empty(0, dtype=element_dtype)
+            return item
+    
+        root = self.heap[0].copy()
+        self.heap[0] = self.heap[-1]
+        self.heap = self.heap[:-1]
+        self._heapify_down(0)
+        return root
 
-    def adicionar_vertice(self, vertice):
-        if vertice not in self.lista_adjacencia:
-            self.lista_adjacencia[vertice] = []
+    def modify_priority(self, idItem, newPriority):
+        indices = np.where(self.heap['id'] == idItem)[0]
+        
+        if len(indices) != 1:
+            print("Nenhum valor encontrado (OU múltiplos itens com o mesmo ID).")
+            return
+        
+        index = indices[0]
+        self.heap[index]['prioridade'] = newPriority
 
-    def adicionar_aresta(self, vertice1, vertice2):
-        if vertice1 in self.lista_adjacencia and vertice2 in self.lista_adjacencia:
-            self.lista_adjacencia[vertice1].append(vertice2)
-            self.lista_adjacencia[vertice2].append(vertice1)
+        self._heapify_up(index)
+        self._heapify_down(index)
 
-    def bfs(self, inicio):
-        visitados = set()
-        fila = [inicio]
+    def _heapify_up(self, index):
+        parent_index = (index - 1) // 2
+        while index > 0 and self.heap[index]['prioridade'] < self.heap[parent_index]['prioridade']:
+            self.heap[[index, parent_index]] = self.heap[[parent_index, index]]
+            index = parent_index
+            parent_index = (index - 1) // 2
 
-        while fila:
-            vertice = fila.pop(0)
-            if vertice not in visitados:
-                print(vertice, end=" ")
-                visitados.add(vertice)
-                fila.extend(self.lista_adjacencia[vertice])
+    def _heapify_down(self, index):
+        smallest = index
+        left_child = 2 * index + 1
+        right_child = 2 * index + 2
 
-cidade = MapaCidade()
-bairros = ["Centro", "Jardins", "Vila Madalena", "Brooklin", "Moema", "Pinheiros", "Itaim Bibi"]
+        if left_child < len(self.heap) and self.heap[left_child]['prioridade'] < self.heap[smallest]['prioridade']:
+            smallest = left_child
+        if right_child < len(self.heap) and self.heap[right_child]['prioridade'] < self.heap[smallest]['prioridade']:
+            smallest = right_child
 
-for i in bairros:
-    cidade.adicionar_vertice(i)
+        if smallest != index:
+            self.heap[[index, smallest]] = self.heap[[smallest, index]]
+            self._heapify_down(smallest)
 
-ruas = [("Centro", "Jardins"), ("Centro", "Pinheiros"), ("Jardins", "Moema"), ("Moema", "Brooklin"), ("Brooklin", "Itaim Bibi"), ("Pinheiros", "Vila Madalena")]
+pacotes = [(1, 5, 342), (2, 4, 376), (3, 3, 887), (4, 2, 1765)]
 
-for i, j in ruas:
-    cidade.adicionar_aresta(i, j)
+heap = MinHeap()
+for p in pacotes:
+    heap.insert(p)
 
-cidade.bfs("Centro")
+heap.modify_priority(1, 1)
+
+print("- Pacotes:")
+while len(heap.heap) > 0:
+    item = heap.pop()
+    print(f"\tID: {item['id']} - Prioridade: {item['prioridade']} - Tempo: {item['tempo']}")
